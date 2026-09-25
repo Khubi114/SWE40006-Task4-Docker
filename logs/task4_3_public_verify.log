@@ -1,0 +1,60 @@
+$ curl -sS -i https://swe40006-khubi-web.onrender.com/
+HTTP/1.1 200 Connection Established
+
+HTTP/2 200 
+date: Fri, 25 Sep 2026 06:46:59 GMT
+content-type: text/html; charset=utf-8
+server: cloudflare
+vary: Accept-Encoding
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SWE40006 Container Info</title>
+  <style>
+    body { font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; background:#f4f6fb; color:#1d2433; margin:0; }
+    header { background:#1d63ed; color:#fff; padding:28px 16px; text-align:center; }
+    header h1 { margin:0 0 6px; font-size:1.7rem; }
+    header p { margin:0; opacity:.9; }
+    main { max-width:760px; margin:24px auto; padding:0 16px; }
+    .card { background:#fff; border-radius:10px; box-shadow:0 1px 4px rgba(0,0,0,.08); padding:18px 22px; margin-bottom:18px; }
+    h2 { font-size:1.1rem; margin:0 0 10px; color:#1d63ed; }
+    table { width:100%; border-collapse:collapse; }
+    td { padding:6px 4px; border-bottom:1px solid #eef0f5; }
+    td:first-child { color:#5b6475; width:40%; }
+    .env { display:inline-block; background:#e6f4ea; color:#137333; padding:2px 10px; border-radius:12px; font-weight:600; }
+    footer { text-align:center; color:#8a93a6; font-size:.85rem; padding:12px 0 30px; }
+    code { background:#eef0f5; padding:1px 5px; border-radius:4px; }
+  </style>
+</head>
+
+
+$ curl -sS -i https://swe40006-khubi-web.onrender.com/health
+HTTP/1.1 200 Connection Established
+
+HTTP/2 200 
+date: Fri, 25 Sep 2026 06:47:01 GMT
+content-type: application/json
+server: cloudflare
+vary: Accept-Encoding
+
+{"status":"ok","time":"2026-09-25T06:47:01.330043+00:00"}
+
+
+$ curl -sS -i https://swe40006-khubi-web.onrender.com/api/info
+HTTP/1.1 200 Connection Established
+
+HTTP/2 200 
+date: Fri, 25 Sep 2026 06:47:03 GMT
+content-type: application/json
+server: cloudflare
+vary: Accept-Encoding
+
+{"config":{"app_env":"render-production","app_name":"SWE40006 Container Info","app_version":"1.0.0","greeting":"Live on Render - pulled from Docker Hub","owner":"Khubi Shah","port":10000},"runtime":{"container_ip":"10.24.131.204","hostname":"srv-dar1hae0tbcc738lttg0-hibernate-7494c94cf6-hp4fz","platform":"Linux x86_64","python":"3.12.14","requests_served":10,"started_at":"2026-09-25 06:46:23 UTC","uptime_seconds":39}}
+
+
+$ dig +short swe40006-khubi-web.onrender.com
+216.24.57.18    gcp-us-west1-1.origin.onrender.com.cdn.cloudflare.net swe40006-khubi-web.onrender.com gcp-us-west1-1.origin.onrender.com
+216.24.57.16    gcp-us-west1-1.origin.onrender.com.cdn.cloudflare.net swe40006-khubi-web.onrender.com gcp-us-west1-1.origin.onrender.com
