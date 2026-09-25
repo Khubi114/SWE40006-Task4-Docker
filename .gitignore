@@ -1,0 +1,10 @@
+.DS_Store
+__pycache__/
+*.pyc
+.env
+data-processor/sample-data/output/
+*.docx
+*.pdf
+screenshots/.req_*
+logs/.*_done
+logs/.install_done
