@@ -1,0 +1,18 @@
+# Task 4.4 - run-to-completion job with a bind mount (input/output) and a named volume (state)
+services:
+  processor:
+    build: .
+    image: ${DOCKERHUB_USER:-khubi114}/swe40006-processor:1.0
+    container_name: swe40006-processor
+    environment:
+      CURRENCY: AUD
+      LOG_LEVEL: INFO
+    volumes:
+      - ./sample-data/input:/data/input:ro
+      - ./sample-data/output:/data/output
+      - processor-state:/data/state
+    restart: "no"
+
+volumes:
+  processor-state:
+    name: swe40006-processor-state
