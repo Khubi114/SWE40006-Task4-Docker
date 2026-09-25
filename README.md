@@ -6,11 +6,11 @@ Khubi Shah · 105933114 · SWE40006 Software Deployment and Evolution · Semeste
 |---|---|---|
 | 4.1 Pass | Docker Desktop 4.92 on macOS (Apple silicon), Docker Hub account `khubi114`, `hello-world` run | `scripts/task4_1_verify.sh`, `logs/task4_1_hello_world.log` |
 | 4.2 Credit | Flask app, custom Dockerfile, local run on port 8080, multi-arch push to Docker Hub, pull-and-run on a second host (GitHub Actions runner) | `web-app/`, `scripts/task4_2_*.sh`, `.github/workflows/secondary-host-verify.yml` |
-| 4.3 Distinction | Same image deployed on Render with env vars, public HTTPS URL | `web-app/docker-compose.yml`, `web-app/.env.example` |
+| 4.3 Distinction | Compose run on a user-defined bridge network with an env file; same image deployed on Render (Singapore, free tier) with env vars and a `/health` check, public HTTPS URL | `web-app/docker-compose.yml`, `web-app/.env.example`, `scripts/task4_3_compose.sh`, `logs/task4_3_*.log` |
 | 4.4 High Distinction | Non-web CLI expense processor, bind mounts + named volume, run-to-completion lifecycle and logs | `data-processor/`, `scripts/task4_4_run.sh` |
 
 **Docker Hub:** https://hub.docker.com/r/khubi114/swe40006-web  
-**Live URL (Render):** RENDER_URL
+**Live URL (Render):** https://swe40006-khubi-web.onrender.com (free tier: first request after idle can take ~50 s to wake)
 
 ## Layout
 
@@ -21,6 +21,7 @@ scripts/            the exact scripts run on the Mac (output tee'd to logs/)
 logs/               raw console output of every build / run / push
 .github/workflows/  secondary Docker host verification (pull from Docker Hub and run)
 Run_Task4.command   macOS double-click runner for 4.1, 4.2 and 4.4
+Run_Task4.3_Compose.command  runner for the 4.3 compose/network check
 ```
 
 ## Reproduce
