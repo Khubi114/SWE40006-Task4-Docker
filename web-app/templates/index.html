@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ cfg.app_name }}</title>
+  <style>
+    body { font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; background:#f4f6fb; color:#1d2433; margin:0; }
+    header { background:#1d63ed; color:#fff; padding:28px 16px; text-align:center; }
+    header h1 { margin:0 0 6px; font-size:1.7rem; }
+    header p { margin:0; opacity:.9; }
+    main { max-width:760px; margin:24px auto; padding:0 16px; }
+    .card { background:#fff; border-radius:10px; box-shadow:0 1px 4px rgba(0,0,0,.08); padding:18px 22px; margin-bottom:18px; }
+    h2 { font-size:1.1rem; margin:0 0 10px; color:#1d63ed; }
+    table { width:100%; border-collapse:collapse; }
+    td { padding:6px 4px; border-bottom:1px solid #eef0f5; }
+    td:first-child { color:#5b6475; width:40%; }
+    .env { display:inline-block; background:#e6f4ea; color:#137333; padding:2px 10px; border-radius:12px; font-weight:600; }
+    footer { text-align:center; color:#8a93a6; font-size:.85rem; padding:12px 0 30px; }
+    code { background:#eef0f5; padding:1px 5px; border-radius:4px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>{{ cfg.app_name }}</h1>
+    <p>{{ cfg.greeting }}</p>
+  </header>
+  <main>
+    <div class="card">
+      <h2>Configuration (from environment variables)</h2>
+      <table>
+        <tr><td>APP_ENV</td><td><span class="env">{{ cfg.app_env }}</span></td></tr>
+        <tr><td>APP_VERSION</td><td>{{ cfg.app_version }}</td></tr>
+        <tr><td>APP_OWNER</td><td>{{ cfg.owner }}</td></tr>
+        <tr><td>PORT</td><td>{{ cfg.port }}</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h2>Container runtime</h2>
+      <table>
+        <tr><td>Hostname (container ID)</td><td>{{ rt.hostname }}</td></tr>
+        <tr><td>Container IP</td><td>{{ rt.container_ip }}</td></tr>
+        <tr><td>Platform</td><td>{{ rt.platform }}</td></tr>
+        <tr><td>Python</td><td>{{ rt.python }}</td></tr>
+        <tr><td>Started</td><td>{{ rt.started_at }}</td></tr>
+        <tr><td>Uptime</td><td>{{ rt.uptime_seconds }} s</td></tr>
+        <tr><td>Requests served</td><td>{{ rt.requests_served }}</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h2>Endpoints</h2>
+      <p><code>/</code> this page &nbsp; <code>/health</code> health check &nbsp; <code>/api/info</code> JSON</p>
+    </div>
+  </main>
+  <footer>SWE40006 Software Deployment and Evolution &middot; Task 4 &middot; {{ cfg.owner }}</footer>
+</body>
+</html>
