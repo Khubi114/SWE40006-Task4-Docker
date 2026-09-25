@@ -1,0 +1,47 @@
+# Task 4.2 multi-host verification.
+# A fresh GitHub-hosted Ubuntu runner acts as the secondary Docker host:
+# it pulls the image that was pushed from the Mac to Docker Hub, runs it,
+# and checks the HTTP endpoints. Nothing is built here - only pulled.
+name: Secondary host - pull and run from Docker Hub
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [".github/workflows/**", "web-app/**"]
+
+env:
+  IMAGE: khubi114/swe40006-web:1.0
+
+jobs:
+  pull-and-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Docker host details
+        run: |
+          docker version
+          docker info --format 'OS={{.OperatingSystem}} Arch={{.Architecture}} CPUs={{.NCPU}}'
+          hostname
+
+      - name: Pull image from Docker Hub
+        run: docker pull $IMAGE
+
+      - name: Run container (port 80 -> 5000, env vars set)
+        run: |
+          docker run -d --name swe40006-web -p 80:5000 \
+            -e APP_ENV=github-actions-runner \
+            -e GREETING="Pulled from Docker Hub and running on a second host" \
+            $IMAGE
+          sleep 5
+          docker ps
+
+      - name: Verify HTTP endpoints
+        run: |
+          curl -fsS http://localhost/health
+          echo
+          curl -fsS http://localhost/api/info | python3 -m json.tool
+          curl -fsS http://localhost/ | grep -o '<h1>.*</h1>'
+
+      - name: Container logs
+        if: always()
+        run: docker logs swe40006-web
