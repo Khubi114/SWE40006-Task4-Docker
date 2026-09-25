@@ -1,0 +1,16 @@
+# Task 4.3 - local run with a user-defined bridge network and env vars
+services:
+  web:
+    build: .
+    image: ${DOCKERHUB_USER:-khubi114}/swe40006-web:1.0
+    container_name: swe40006-web
+    env_file: .env
+    ports:
+      - "8080:5000"
+    networks:
+      - swe40006-net
+    restart: unless-stopped
+
+networks:
+  swe40006-net:
+    driver: bridge
