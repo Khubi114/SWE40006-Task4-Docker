@@ -1,0 +1,44 @@
+
+kay@mac$ docker run -d --name swe40006-local -p 8080:5000 -e APP_ENV=local-macbook -e 'GREETING=Hello from Docker Desktop on my MacBook' khubi114/swe40006-web:1.0
+0c6520a95de18bbabe280c5904dde3dec16febb5beeaac5aca23cf726ad75516
+
+kay@mac$ docker ps --filter name=swe40006-local
+CONTAINER ID   IMAGE                       COMMAND                  CREATED         STATUS                            PORTS                                         NAMES
+0c6520a95de1   khubi114/swe40006-web:1.0   "/bin/sh -c 'gunicor…"   4 seconds ago   Up 4 seconds (health: starting)   0.0.0.0:8080->5000/tcp, [::]:8080->5000/tcp   swe40006-local
+
+kay@mac$ docker port swe40006-local
+5000/tcp -> 0.0.0.0:8080
+5000/tcp -> [::]:8080
+
+kay@mac$ curl -s http://localhost:8080/health
+{"status":"ok","time":"2026-09-25T06:27:21.553746+00:00"}
+
+kay@mac$ curl -s http://localhost:8080/api/info | python3 -m json.tool
+{
+    "config": {
+        "app_env": "local-macbook",
+        "app_name": "SWE40006 Container Info",
+        "app_version": "1.0.0",
+        "greeting": "Hello from Docker Desktop on my MacBook",
+        "owner": "Khubi Shah",
+        "port": 5000
+    },
+    "runtime": {
+        "container_ip": "172.17.0.2",
+        "hostname": "0c6520a95de1",
+        "platform": "Linux aarch64",
+        "python": "3.12.14",
+        "requests_served": 2,
+        "started_at": "2026-09-25 06:27:17 UTC",
+        "uptime_seconds": 3
+    }
+}
+
+kay@mac$ docker logs swe40006-local
+[2026-09-25 06:27:17 +0000] [7] [INFO] Starting gunicorn 22.0.0
+[2026-09-25 06:27:17 +0000] [7] [INFO] Listening at: http://0.0.0.0:5000 (7)
+[2026-09-25 06:27:17 +0000] [7] [INFO] Using worker: sync
+[2026-09-25 06:27:17 +0000] [8] [INFO] Booting worker with pid: 8
+[2026-09-25 06:27:17 +0000] [9] [INFO] Booting worker with pid: 9
+192.168.65.1 - - [25/Sep/2026:06:27:21 +0000] "GET /health HTTP/1.1" 200 58 "-" "curl/8.7.1"
+192.168.65.1 - - [25/Sep/2026:06:27:21 +0000] "GET /api/info HTTP/1.1" 200 374 "-" "curl/8.7.1"

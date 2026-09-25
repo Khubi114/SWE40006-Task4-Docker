@@ -1,0 +1,132 @@
+
+kay@mac$ cat docker-compose.yml
+# Task 4.4 - run-to-completion job with a bind mount (input/output) and a named volume (state)
+services:
+  processor:
+    build: .
+    image: ${DOCKERHUB_USER:-khubishah}/swe40006-processor:1.0
+    container_name: swe40006-processor
+    environment:
+      CURRENCY: AUD
+      LOG_LEVEL: INFO
+    volumes:
+      - ./sample-data/input:/data/input:ro
+      - ./sample-data/output:/data/output
+      - processor-state:/data/state
+    restart: "no"
+
+volumes:
+  processor-state:
+    name: swe40006-processor-state
+
+kay@mac$ docker compose build 2>&1 | tail -4
+
+#11 resolving provenance for metadata file
+#11 DONE 0.0s
+ Image khubi114/swe40006-processor:1.0 Built 
+
+kay@mac$ ls sample-data/input
+expenses_2026-07.csv
+expenses_2026-08.csv
+expenses_2026-09.csv
+---- RUN 1: fresh volume, all files are new ----
+
+kay@mac$ docker compose run --name proc-run1 processor
+ Volume swe40006-processor-state Creating 
+ Volume swe40006-processor-state Creating 
+ Volume swe40006-processor-state Created 
+ Volume swe40006-processor-state Created 
+ Container proc-run1 Creating 
+ Container proc-run1 Created 
+2026-09-25 06:27:41 [INFO] Container 2dd2b2d4b3ae starting expense processor
+2026-09-25 06:27:41 [INFO] input=/data/input output=/data/output state=/data/state currency=AUD
+2026-09-25 06:27:41 [INFO] Found 3 CSV file(s): ['expenses_2026-07.csv', 'expenses_2026-08.csv', 'expenses_2026-09.csv']
+2026-09-25 06:27:41 [INFO] OK   expenses_2026-07.csv processed
+2026-09-25 06:27:41 [WARNING] REJECT expenses_2026-08.csv line 9: {'date': '2026-08-21', 'category': 'eating out', 'description': 'Coffee', 'amount': 'abc'} -> could not convert string to float: 'abc'
+2026-09-25 06:27:41 [INFO] OK   expenses_2026-08.csv processed
+2026-09-25 06:27:41 [WARNING] REJECT expenses_2026-09.csv line 6: {'date': '2026-09/15', 'category': 'groceries', 'description': 'Aldi', 'amount': '70.25'} -> time data '2026-09/15' does not match format '%Y-%m-%d'
+2026-09-25 06:27:41 [INFO] OK   expenses_2026-09.csv processed
+2026-09-25 06:27:41 [INFO] Wrote report_run001_20260925-062741.csv and report_run001_20260925-062741.json to /data/output
+2026-09-25 06:27:41 [INFO]   Rent               2550.00 AUD
+2026-09-25 06:27:41 [INFO]   Groceries           600.55 AUD
+2026-09-25 06:27:41 [INFO]   Utilities           270.45 AUD
+2026-09-25 06:27:41 [INFO]   Transport           250.00 AUD
+2026-09-25 06:27:41 [INFO]   Textbooks           103.95 AUD
+2026-09-25 06:27:41 [INFO]   Eating Out           88.00 AUD
+2026-09-25 06:27:41 [INFO]   Subscriptions        27.98 AUD
+2026-09-25 06:27:41 [INFO]   TOTAL              3890.93 AUD
+2026-09-25 06:27:41 [INFO] Run #1 complete: 3 file(s), 25 rows ok, 2 rejected. Exiting with code 0
+
+kay@mac$ docker inspect proc-run1 --format 'State={{.State.Status}} ExitCode={{.State.ExitCode}} Started={{.State.StartedAt}} Finished={{.State.FinishedAt}}'
+State=exited ExitCode=0 Started=2026-09-25T06:27:41.679314593Z Finished=2026-09-25T06:27:41.946163426Z
+
+kay@mac$ ls -l sample-data/output
+total 16
+-rw-r--r--@ 1 kay  staff  206 25 Sep 16:27 report_run001_20260925-062741.csv
+-rw-r--r--@ 1 kay  staff  568 25 Sep 16:27 report_run001_20260925-062741.json
+
+kay@mac$ docker ps -a --filter name=proc-run1
+CONTAINER ID   IMAGE                             COMMAND                 CREATED        STATUS                              PORTS     NAMES
+2dd2b2d4b3ae   khubi114/swe40006-processor:1.0   "python processor.py"   1 second ago   Exited (0) Less than a second ago             proc-run1
+
+kay@mac$ docker logs proc-run1 | head -5
+2026-09-25 06:27:41 [INFO] Container 2dd2b2d4b3ae starting expense processor
+2026-09-25 06:27:41 [INFO] input=/data/input output=/data/output state=/data/state currency=AUD
+2026-09-25 06:27:41 [INFO] Found 3 CSV file(s): ['expenses_2026-07.csv', 'expenses_2026-08.csv', 'expenses_2026-09.csv']
+2026-09-25 06:27:41 [INFO] OK   expenses_2026-07.csv processed
+2026-09-25 06:27:41 [WARNING] REJECT expenses_2026-08.csv line 9: {'date': '2026-08-21', 'category': 'eating out', 'description': 'Coffee', 'amount': 'abc'} -> could not convert string to float: 'abc'
+
+kay@mac$ docker volume inspect swe40006-processor-state --format 'Volume {{.Name}} -> {{.Mountpoint}}'
+Volume swe40006-processor-state -> /var/lib/docker/volumes/swe40006-processor-state/_data
+
+kay@mac$ cat sample-data/output/*.json
+{
+  "run_id": 1,
+  "generated_at": "2026-09-25T06:27:41.921223+00:00",
+  "container": "2dd2b2d4b3ae",
+  "currency": "AUD",
+  "files": [
+    "expenses_2026-07.csv",
+    "expenses_2026-08.csv",
+    "expenses_2026-09.csv"
+  ],
+  "rows_ok": 25,
+  "rows_rejected": 2,
+  "total": 3890.93,
+  "by_category": {
+    "Eating Out": 88.0,
+    "Groceries": 600.55,
+    "Rent": 2550.0,
+    "Subscriptions": 27.98,
+    "Textbooks": 103.95,
+    "Transport": 250.0,
+    "Utilities": 270.45
+  },
+  "by_month": {
+    "2026-07": 1360.3,
+    "2026-08": 1375.34,
+    "2026-09": 1155.29
+  }
+}---- RUN 2: new container, same volume -> files skipped ----
+
+kay@mac$ docker compose run --rm processor 2>/dev/null
+2026-09-25 06:27:44 [INFO] Container fcedda0b4412 starting expense processor
+2026-09-25 06:27:44 [INFO] input=/data/input output=/data/output state=/data/state currency=AUD
+2026-09-25 06:27:44 [INFO] Found 3 CSV file(s): ['expenses_2026-07.csv', 'expenses_2026-08.csv', 'expenses_2026-09.csv']
+2026-09-25 06:27:44 [INFO] SKIP expenses_2026-07.csv (already processed in run #1)
+2026-09-25 06:27:44 [INFO] SKIP expenses_2026-08.csv (already processed in run #1)
+2026-09-25 06:27:44 [INFO] SKIP expenses_2026-09.csv (already processed in run #1)
+2026-09-25 06:27:44 [INFO] No new files to process - nothing written
+2026-09-25 06:27:44 [INFO] Run #2 complete: 0 file(s), 0 rows ok, 0 rejected. Exiting with code 0
+---- RUN 3: history read from the named volume ----
+
+kay@mac$ docker compose run --rm processor --history 2>/dev/null
+2026-09-25 06:27:44 [INFO] Run history (2 runs) from /data/state/history.db
+2026-09-25 06:27:44 [INFO] run #1 | 2026-09-25T06:27:41.921223+00:00 | host=2dd2b2d4b3ae | files=3 ok=25 rejected=2 | total=3890.93 | report_run001_20260925-062741
+2026-09-25 06:27:44 [INFO] run #2 | 2026-09-25T06:27:44.146957+00:00 | host=fcedda0b4412 | files=0 ok=0 rejected=0 | total=0.00 | None
+
+kay@mac$ docker rm proc-run1
+proc-run1
+
+kay@mac$ docker ps -a --filter ancestor=khubi114/swe40006-processor:1.0
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES

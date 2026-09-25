@@ -1,0 +1,32 @@
+
+kay@mac$ docker info 2>/dev/null | grep Username
+
+kay@mac$ docker buildx create --name swe40006-builder --use >/dev/null 2>&1 || docker buildx use swe40006-builder
+
+kay@mac$ docker buildx build --platform linux/amd64,linux/arm64 -t khubi114/swe40006-web:1.0 -t khubi114/swe40006-web:latest --push . 2>&1 | grep -E 'pushing|DONE [0-9.]+s$|manifest list|naming' | tail -25
+#1 DONE 0.0s
+#2 DONE 1.0s
+#3 DONE 1.0s
+#4 DONE 0.0s
+#5 DONE 0.0s
+#6 DONE 0.0s
+#7 DONE 0.0s
+#20 exporting manifest list sha256:56fa317ce35641bba05ca83a2b3803c3f128912cb073b8d5533ca57c27db3e24 done
+#20 pushing layers
+#21 DONE 0.0s
+#20 pushing layers 2.8s done
+#20 pushing manifest for docker.io/khubi114/swe40006-web:1.0@sha256:56fa317ce35641bba05ca83a2b3803c3f128912cb073b8d5533ca57c27db3e24
+#20 pushing manifest for docker.io/khubi114/swe40006-web:1.0@sha256:56fa317ce35641bba05ca83a2b3803c3f128912cb073b8d5533ca57c27db3e24 4.3s done
+#20 pushing layers 1.8s done
+#20 pushing manifest for docker.io/khubi114/swe40006-web:latest@sha256:56fa317ce35641bba05ca83a2b3803c3f128912cb073b8d5533ca57c27db3e24
+#20 pushing manifest for docker.io/khubi114/swe40006-web:latest@sha256:56fa317ce35641bba05ca83a2b3803c3f128912cb073b8d5533ca57c27db3e24 3.5s done
+#20 DONE 12.4s
+
+kay@mac$ docker buildx imagetools inspect khubi114/swe40006-web:1.0 | grep -E 'Name|Platform: *linux'
+Name:      docker.io/khubi114/swe40006-web:1.0
+  Name:        docker.io/khubi114/swe40006-web:1.0@sha256:e1ba1a70d762eed39c54f55c25e8f813647ae9cb547042ab29af0b023d941eda
+  Platform:    linux/amd64
+  Name:        docker.io/khubi114/swe40006-web:1.0@sha256:a3a813a766e0a20e93ccfb788f692432911dc860123d9b35e96a4d116750b348
+  Platform:    linux/arm64
+  Name:        docker.io/khubi114/swe40006-web:1.0@sha256:43d4fbac81dbf56f3f318755308d0c88324d725c5d15685a5c6aff3ab507c40b
+  Name:        docker.io/khubi114/swe40006-web:1.0@sha256:a8cce8d71d5f1f2e2102f5e3eb80a76424d62c48b51bb1a240b50f1f5f4bda6d

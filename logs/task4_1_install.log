@@ -1,0 +1,27 @@
+
+kay@mac$ sw_vers
+ProductName:		macOS
+ProductVersion:		26.6.2
+BuildVersion:		25G83
+
+kay@mac$ uname -m
+arm64
+
+kay@mac$ curl -sSL -o ~/Downloads/Docker.dmg -w 'Downloaded %{size_download} bytes in %{time_total}s\n' https://desktop.docker.com/mac/main/arm64/Docker.dmg
+Downloaded 586158615 bytes in 33.900230s
+
+kay@mac$ hdiutil attach ~/Downloads/Docker.dmg -nobrowse -mountpoint /Volumes/Docker
+hdiutil: attach failed - Resource temporarily unavailable
+
+kay@mac$ cp -R /Volumes/Docker/Docker.app /Applications/
+cp: /Volumes/Docker/Docker.app: No such file or directory
+
+kay@mac$ hdiutil detach /Volumes/Docker
+hdiutil: detach failed - No such file or directory
+
+kay@mac$ defaults read /Applications/Docker.app/Contents/Info.plist CFBundleShortVersionString
+2026-09-25 16:05:02.843 defaults[7929:115872] 
+The domain/default pair of (/Applications/Docker.app/Contents/Info.plist, CFBundleShortVersionString) does not exist
+
+kay@mac$ ls -ld /Applications/Docker.app
+ls: /Applications/Docker.app: No such file or directory
